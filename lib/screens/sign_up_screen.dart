@@ -245,10 +245,13 @@ class SignupScreen extends StatelessWidget {
 
     Widget signUpButton() {
       return Container(
+        height: 50,
         width: double.infinity,
         margin: EdgeInsets.only(top: 30),
         child: TextButton(
-          onPressed: () {},
+          onPressed: () {
+            Navigator.pushNamed(context, '/home');
+          },
           style: TextButton.styleFrom(
             backgroundColor: primaryColor,
             shape: RoundedRectangleBorder(
@@ -270,6 +273,7 @@ class SignupScreen extends StatelessWidget {
       return Container(
         margin: EdgeInsets.only(bottom: 30),
         child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
               'Already have an account? ',

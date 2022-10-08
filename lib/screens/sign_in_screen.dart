@@ -140,7 +140,9 @@ class SigninScreen extends StatelessWidget {
         width: double.infinity,
         margin: EdgeInsets.only(top: 30),
         child: TextButton(
-          onPressed: () {},
+          onPressed: () {
+            Navigator.pushNamed(context, '/home');
+          },
           style: TextButton.styleFrom(
             backgroundColor: primaryColor,
             shape: RoundedRectangleBorder(
@@ -162,6 +164,7 @@ class SigninScreen extends StatelessWidget {
       return Container(
         margin: EdgeInsets.only(bottom: 30),
         child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
               'Don\'t Have an Account? ',
