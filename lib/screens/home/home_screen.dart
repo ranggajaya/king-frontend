@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:king_frontend/themes/theme.dart';
+import 'package:king_frontend/widget/product_tile.dart';
 import 'package:king_frontend/widget/products_card.dart';
 import 'package:king_frontend/widget/products_card.dart';
 
@@ -219,6 +220,39 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
+  Widget newArrivalTitle() {
+    return Container(
+      margin: EdgeInsets.only(
+        top: defaultMargin,
+        right: defaultMargin,
+        left: defaultMargin,
+      ),
+      child: Text(
+        'New Arrivals',
+        style: primaryTextStyle.copyWith(
+          fontSize: 22,
+          fontWeight: semiBold,
+        ),
+      ),
+    );
+  }
+
+  Widget newArrivals() {
+    return Container(
+      margin: EdgeInsets.only(
+        top: 14,
+      ),
+      child: Column(
+        children: [
+          ProductTile(),
+          ProductTile(),
+          ProductTile(),
+          ProductTile(),
+        ],
+      ),
+    );
+  }
+
   Widget build(BuildContext context) {
     return ListView(
       children: [
@@ -226,6 +260,8 @@ class HomeScreen extends StatelessWidget {
         categories(),
         popularProductsTitle(),
         popularProducts(),
+        newArrivalTitle(),
+        newArrivals(),
       ],
     );
   }
