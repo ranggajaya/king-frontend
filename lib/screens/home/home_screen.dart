@@ -2,10 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:king_frontend/themes/theme.dart';
 import 'package:king_frontend/widget/product_tile.dart';
 import 'package:king_frontend/widget/products_card.dart';
-import 'package:king_frontend/widget/products_card.dart';
 
 class HomeScreen extends StatelessWidget {
-  @override
   Widget header() {
     return Container(
       margin: EdgeInsets.only(
@@ -253,6 +251,7 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
+  @override
   Widget build(BuildContext context) {
     return ListView(
       children: [
