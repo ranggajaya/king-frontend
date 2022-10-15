@@ -17,7 +17,9 @@ class _MainScreenState extends State<MainScreen> {
   Widget build(BuildContext context) {
     Widget cartButton() {
       return FloatingActionButton(
-        onPressed: () {},
+        onPressed: () {
+          Navigator.pushNamed(context, '/cart');
+        },
         backgroundColor: secondaryColor,
         child: Image.asset(
           'assets/icon_cart.png',
@@ -128,7 +130,7 @@ class _MainScreenState extends State<MainScreen> {
     }
 
     return Scaffold(
-      backgroundColor: backgroundColor1,
+      backgroundColor: currentIndex == 0 ? backgroundColor1 : backgroundColor3,
       floatingActionButton: cartButton(),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       bottomNavigationBar: customBottomNav(),

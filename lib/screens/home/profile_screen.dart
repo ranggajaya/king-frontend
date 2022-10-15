@@ -98,7 +98,7 @@ class ProfileScreen extends StatelessWidget {
               ),
               GestureDetector(
                 onTap: () {
-                  Navigator.pushNamed(context, 'edit-profile');
+                  Navigator.pushNamed(context, '/edit-profile');
                 },
                 child: menuItemProfile('Edit Profile'),
               ),
