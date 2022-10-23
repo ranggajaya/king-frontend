@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:king_frontend/providers/auth_provider.dart';
+import 'package:king_frontend/providers/product_provider.dart';
 import 'package:king_frontend/screens/cart_screen.dart';
 import 'package:king_frontend/screens/checkout_screen.dart';
 import 'package:king_frontend/screens/checkout_succes.dart';
@@ -21,6 +22,9 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(
           create: (context) => AuthProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => ProductProvider(),
         ),
       ],
       child: MaterialApp(

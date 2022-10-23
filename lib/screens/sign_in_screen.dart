@@ -1,9 +1,50 @@
 import 'package:flutter/material.dart';
+import 'package:king_frontend/providers/auth_provider.dart';
 import 'package:king_frontend/themes/theme.dart';
+import 'package:king_frontend/widget/loading_button.dart';
+import 'package:provider/provider.dart';
 
-class SigninScreen extends StatelessWidget {
+class SigninScreen extends StatefulWidget {
+  @override
+  _SigninScreenState createState() => _SigninScreenState();
+}
+
+class _SigninScreenState extends State<SigninScreen> {
+  TextEditingController emailController = TextEditingController(text: '');
+
+  TextEditingController passwordController = TextEditingController(text: '');
+
+  bool isLoading = false;
   @override
   Widget build(BuildContext context) {
+    AuthProvider authProvider = Provider.of<AuthProvider>(context);
+
+    handleSignIn() async {
+      setState(() {
+        isLoading = true;
+      });
+
+      if (await authProvider.login(
+        email: emailController.text,
+        password: passwordController.text,
+      )) {
+        Navigator.pushNamed(context, '/home');
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: alertColor,
+            content: Text(
+              'Gagal melakukan Login',
+              textAlign: TextAlign.center,
+            ),
+          ),
+        );
+      }
+      setState(() {
+        isLoading = false;
+      });
+    }
+
     Widget header() {
       return Container(
         margin: EdgeInsets.only(top: 30),
@@ -67,6 +108,7 @@ class SigninScreen extends StatelessWidget {
                     Expanded(
                         child: TextFormField(
                       style: primaryTextStyle,
+                      controller: emailController,
                       decoration: InputDecoration.collapsed(
                         hintText: 'Your Email Address',
                         hintStyle: subtitleTextStyle,
@@ -119,6 +161,7 @@ class SigninScreen extends StatelessWidget {
                     Expanded(
                         child: TextFormField(
                       style: primaryTextStyle,
+                      controller: passwordController,
                       obscureText: true,
                       decoration: InputDecoration.collapsed(
                         hintText: 'Your Password',
@@ -140,9 +183,7 @@ class SigninScreen extends StatelessWidget {
         width: double.infinity,
         margin: EdgeInsets.only(top: 30),
         child: TextButton(
-          onPressed: () {
-            Navigator.pushNamed(context, '/home');
-          },
+          onPressed: handleSignIn,
           style: TextButton.styleFrom(
             backgroundColor: primaryColor,
             shape: RoundedRectangleBorder(
@@ -202,7 +243,7 @@ class SigninScreen extends StatelessWidget {
             header(),
             emailInput(),
             passwordInput(),
-            signInButton(),
+            isLoading ? LoadingButton() : signInButton(),
             Spacer(),
             footer(),
           ],

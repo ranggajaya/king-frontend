@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:king_frontend/providers/auth_provider.dart';
 import 'package:king_frontend/themes/theme.dart';
+import 'package:king_frontend/widget/loading_button.dart';
 import 'package:provider/provider.dart';
 
 class SignupScreen extends StatefulWidget {
@@ -17,6 +18,7 @@ class _SignupScreenState extends State<SignupScreen> {
 
   TextEditingController passwordController = TextEditingController(text: '');
 
+  bool isLoading = false;
   @override
   Widget build(BuildContext context) {
     var heigth, width;
@@ -27,6 +29,10 @@ class _SignupScreenState extends State<SignupScreen> {
     AuthProvider authProvider = Provider.of<AuthProvider>(context);
 
     handleSignUp() async {
+      setState(() {
+        isLoading = true;
+      });
+
       if (await authProvider.register(
         name: nameController.text,
         username: usernameController.text,
@@ -34,7 +40,20 @@ class _SignupScreenState extends State<SignupScreen> {
         password: passwordController.text,
       )) {
         Navigator.pushNamed(context, '/home');
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: alertColor,
+            content: Text(
+              'Gagal melakukan Register',
+              textAlign: TextAlign.center,
+            ),
+          ),
+        );
       }
+      setState(() {
+        isLoading = false;
+      });
     }
 
     Widget header() {
@@ -345,7 +364,7 @@ class _SignupScreenState extends State<SignupScreen> {
             usernameInput(),
             emailInput(),
             passwordInput(),
-            signUpButton(),
+            isLoading ? LoadingButton() : signUpButton(),
             Spacer(),
             footer(),
           ],

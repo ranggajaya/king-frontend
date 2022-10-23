@@ -1,258 +1,266 @@
 import 'package:flutter/material.dart';
+import 'package:king_frontend/models/user_model.dart';
+import 'package:king_frontend/providers/auth_provider.dart';
 import 'package:king_frontend/themes/theme.dart';
 import 'package:king_frontend/widget/product_tile.dart';
 import 'package:king_frontend/widget/products_card.dart';
+import 'package:provider/provider.dart';
 
 class HomeScreen extends StatelessWidget {
-  Widget header() {
-    return Container(
-      margin: EdgeInsets.only(
-        top: defaultMargin,
-        left: defaultMargin,
-        right: defaultMargin,
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Hi, Rangga Jaya Kusumah',
-                  style: primaryTextStyle.copyWith(
-                    fontSize: 24,
-                    fontWeight: semiBold,
-                  ),
-                ),
-                Text(
-                  '@ranggajaya18',
-                  style: subtitleTextStyle.copyWith(
-                    fontSize: 16,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Container(
-            width: 54,
-            height: 54,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              image: DecorationImage(
-                image: AssetImage('assets/image_profile.png'),
-              ),
-            ),
-          )
-        ],
-      ),
-    );
-  }
+  @override
+  Widget build(BuildContext context) {
+    AuthProvider authProvider = Provider.of<AuthProvider>(context);
+    UserModel user = authProvider.user;
 
-  Widget categories() {
-    return Container(
-      margin: EdgeInsets.only(
-        top: defaultMargin,
-      ),
-      child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
+    Widget header() {
+      return Container(
+        margin: EdgeInsets.only(
+          top: defaultMargin,
+          left: defaultMargin,
+          right: defaultMargin,
+        ),
         child: Row(
           children: [
-            SizedBox(
-              width: defaultMargin,
-            ),
-            Container(
-              padding: EdgeInsets.symmetric(
-                horizontal: 12,
-                vertical: 10,
-              ),
-              margin: EdgeInsets.only(
-                right: 16,
-              ),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12),
-                color: primaryColor,
-              ),
-              child: Text(
-                'All Shoes',
-                style: primaryTextStyle.copyWith(
-                  fontSize: 13,
-                  fontWeight: medium,
-                ),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Hi, ${user.name}',
+                    style: primaryTextStyle.copyWith(
+                      fontSize: 24,
+                      fontWeight: semiBold,
+                    ),
+                  ),
+                  Text(
+                    '@${user.username}',
+                    style: subtitleTextStyle.copyWith(
+                      fontSize: 16,
+                    ),
+                  ),
+                ],
               ),
             ),
             Container(
-              padding: EdgeInsets.symmetric(
-                horizontal: 12,
-                vertical: 10,
-              ),
-              margin: EdgeInsets.only(
-                right: 16,
-              ),
+              width: 54,
+              height: 54,
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(
-                  color: subtitleColor,
-                ),
-                color: transparentColor,
-              ),
-              child: Text(
-                'Running',
-                style: subtitleTextStyle.copyWith(
-                  fontSize: 13,
-                  fontWeight: medium,
+                shape: BoxShape.circle,
+                image: DecorationImage(
+                  image: NetworkImage(
+                    user.profilePhotoUrl,
+                  ),
                 ),
               ),
-            ),
-            Container(
-              padding: EdgeInsets.symmetric(
-                horizontal: 12,
-                vertical: 10,
-              ),
-              margin: EdgeInsets.only(
-                right: 16,
-              ),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(
-                  color: subtitleColor,
-                ),
-                color: transparentColor,
-              ),
-              child: Text(
-                'Training',
-                style: subtitleTextStyle.copyWith(
-                  fontSize: 13,
-                  fontWeight: medium,
-                ),
-              ),
-            ),
-            Container(
-              padding: EdgeInsets.symmetric(
-                horizontal: 12,
-                vertical: 10,
-              ),
-              margin: EdgeInsets.only(
-                right: 16,
-              ),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(
-                  color: subtitleColor,
-                ),
-                color: transparentColor,
-              ),
-              child: Text(
-                'Basket Ball',
-                style: subtitleTextStyle.copyWith(
-                  fontSize: 13,
-                  fontWeight: medium,
-                ),
-              ),
-            ),
-            Container(
-              padding: EdgeInsets.symmetric(
-                horizontal: 12,
-                vertical: 10,
-              ),
-              margin: EdgeInsets.only(
-                right: 16,
-              ),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(
-                  color: subtitleColor,
-                ),
-                color: transparentColor,
-              ),
-              child: Text(
-                'Hiking',
-                style: subtitleTextStyle.copyWith(
-                  fontSize: 13,
-                  fontWeight: medium,
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget popularProductsTitle() {
-    return Container(
-      margin: EdgeInsets.only(
-        top: defaultMargin,
-        right: defaultMargin,
-        left: defaultMargin,
-      ),
-      child: Text(
-        'Popular Products',
-        style: primaryTextStyle.copyWith(
-          fontSize: 22,
-          fontWeight: semiBold,
-        ),
-      ),
-    );
-  }
-
-  Widget popularProducts() {
-    return Container(
-      margin: EdgeInsets.only(top: 14),
-      child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: Row(
-          children: [
-            SizedBox(
-              width: defaultMargin,
-            ),
-            Row(
-              children: [
-                ProductCard(),
-                ProductCard(),
-                ProductCard(),
-              ],
             )
           ],
         ),
-      ),
-    );
-  }
+      );
+    }
 
-  Widget newArrivalTitle() {
-    return Container(
-      margin: EdgeInsets.only(
-        top: defaultMargin,
-        right: defaultMargin,
-        left: defaultMargin,
-      ),
-      child: Text(
-        'New Arrivals',
-        style: primaryTextStyle.copyWith(
-          fontSize: 22,
-          fontWeight: semiBold,
+    Widget categories() {
+      return Container(
+        margin: EdgeInsets.only(
+          top: defaultMargin,
         ),
-      ),
-    );
-  }
+        child: SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            children: [
+              SizedBox(
+                width: defaultMargin,
+              ),
+              Container(
+                padding: EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 10,
+                ),
+                margin: EdgeInsets.only(
+                  right: 16,
+                ),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
+                  color: primaryColor,
+                ),
+                child: Text(
+                  'All Shoes',
+                  style: primaryTextStyle.copyWith(
+                    fontSize: 13,
+                    fontWeight: medium,
+                  ),
+                ),
+              ),
+              Container(
+                padding: EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 10,
+                ),
+                margin: EdgeInsets.only(
+                  right: 16,
+                ),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: subtitleColor,
+                  ),
+                  color: transparentColor,
+                ),
+                child: Text(
+                  'Running',
+                  style: subtitleTextStyle.copyWith(
+                    fontSize: 13,
+                    fontWeight: medium,
+                  ),
+                ),
+              ),
+              Container(
+                padding: EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 10,
+                ),
+                margin: EdgeInsets.only(
+                  right: 16,
+                ),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: subtitleColor,
+                  ),
+                  color: transparentColor,
+                ),
+                child: Text(
+                  'Training',
+                  style: subtitleTextStyle.copyWith(
+                    fontSize: 13,
+                    fontWeight: medium,
+                  ),
+                ),
+              ),
+              Container(
+                padding: EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 10,
+                ),
+                margin: EdgeInsets.only(
+                  right: 16,
+                ),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: subtitleColor,
+                  ),
+                  color: transparentColor,
+                ),
+                child: Text(
+                  'Basket Ball',
+                  style: subtitleTextStyle.copyWith(
+                    fontSize: 13,
+                    fontWeight: medium,
+                  ),
+                ),
+              ),
+              Container(
+                padding: EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 10,
+                ),
+                margin: EdgeInsets.only(
+                  right: 16,
+                ),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: subtitleColor,
+                  ),
+                  color: transparentColor,
+                ),
+                child: Text(
+                  'Hiking',
+                  style: subtitleTextStyle.copyWith(
+                    fontSize: 13,
+                    fontWeight: medium,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
 
-  Widget newArrivals() {
-    return Container(
-      margin: EdgeInsets.only(
-        top: 14,
-      ),
-      child: Column(
-        children: [
-          ProductTile(),
-          ProductTile(),
-          ProductTile(),
-          ProductTile(),
-        ],
-      ),
-    );
-  }
+    Widget popularProductsTitle() {
+      return Container(
+        margin: EdgeInsets.only(
+          top: defaultMargin,
+          right: defaultMargin,
+          left: defaultMargin,
+        ),
+        child: Text(
+          'Popular Products',
+          style: primaryTextStyle.copyWith(
+            fontSize: 22,
+            fontWeight: semiBold,
+          ),
+        ),
+      );
+    }
 
-  @override
-  Widget build(BuildContext context) {
+    Widget popularProducts() {
+      return Container(
+        margin: EdgeInsets.only(top: 14),
+        child: SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            children: [
+              SizedBox(
+                width: defaultMargin,
+              ),
+              Row(
+                children: [
+                  ProductCard(),
+                  ProductCard(),
+                  ProductCard(),
+                ],
+              )
+            ],
+          ),
+        ),
+      );
+    }
+
+    Widget newArrivalTitle() {
+      return Container(
+        margin: EdgeInsets.only(
+          top: defaultMargin,
+          right: defaultMargin,
+          left: defaultMargin,
+        ),
+        child: Text(
+          'New Arrivals',
+          style: primaryTextStyle.copyWith(
+            fontSize: 22,
+            fontWeight: semiBold,
+          ),
+        ),
+      );
+    }
+
+    Widget newArrivals() {
+      return Container(
+        margin: EdgeInsets.only(
+          top: 14,
+        ),
+        child: Column(
+          children: [
+            ProductTile(),
+            ProductTile(),
+            ProductTile(),
+            ProductTile(),
+          ],
+        ),
+      );
+    }
+
     return ListView(
       children: [
         header(),

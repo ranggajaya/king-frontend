@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:king_frontend/models/user_model.dart';
+import 'package:king_frontend/providers/auth_provider.dart';
 import 'package:king_frontend/themes/theme.dart';
+import 'package:provider/provider.dart';
 
 class EditProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    AuthProvider authProvider = Provider.of<AuthProvider>(context);
+    UserModel user = authProvider.user;
+
     Widget header() {
       return AppBar(
         leading: IconButton(
@@ -71,15 +77,16 @@ class EditProfileScreen extends StatelessWidget {
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 image: DecorationImage(
-                  image: AssetImage(
-                    'assets/image_profile.png',
+                  fit: BoxFit.fill,
+                  image: NetworkImage(
+                    user.profilePhotoUrl,
                   ),
                 ),
               ),
             ),
-            nameInput('Name', 'Rangga Jaya Kusumah'),
-            nameInput('Username', '@ranggajaya18'),
-            nameInput('Email', 'ranggajaya11@gmail.com'),
+            nameInput('Name', '${user.name}'),
+            nameInput('Username', '@${user.username}'),
+            nameInput('Email', '${user.email}'),
           ],
         ),
       );
