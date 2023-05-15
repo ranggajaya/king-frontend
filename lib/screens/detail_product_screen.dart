@@ -1,8 +1,14 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:king_frontend/models/product_model.dart';
+import 'package:king_frontend/providers/wishlist_provider.dart';
 import 'package:king_frontend/themes/theme.dart';
+import 'package:provider/provider.dart';
 
 class DetailProductScreen extends StatefulWidget {
+  final ProductModel product;
+  DetailProductScreen(this.product);
+
   @override
   _DetailProductScreenState createState() => _DetailProductScreenState();
 }
@@ -27,10 +33,11 @@ class _DetailProductScreenState extends State<DetailProductScreen> {
   ];
 
   int currentIndex = 0;
-  bool isWishlist = true;
 
   @override
   Widget build(BuildContext context) {
+    WishlistProvider wishlistProvider = Provider.of<WishlistProvider>(context);
+
     Future<void> showSuccessDialog() async {
       return showDialog(
         context: context,
@@ -148,10 +155,10 @@ class _DetailProductScreenState extends State<DetailProductScreen> {
             ),
           ),
           CarouselSlider(
-            items: images
+            items: widget.product.galleries
                 .map(
-                  (image) => Image.asset(
-                    image,
+                  (image) => Image.network(
+                    image.url,
                     width: MediaQuery.of(context).size.width,
                     height: 310,
                     fit: BoxFit.cover,
@@ -171,7 +178,7 @@ class _DetailProductScreenState extends State<DetailProductScreen> {
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: images.map((e) {
+            children: widget.product.galleries.map((e) {
               index++;
               return indicator(index);
             }).toList(),
@@ -227,14 +234,14 @@ class _DetailProductScreenState extends State<DetailProductScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'TERREX URBAN LOW',
+                          widget.product.name,
                           style: primaryTextStyle.copyWith(
                             fontSize: 18,
                             fontWeight: semiBold,
                           ),
                         ),
                         Text(
-                          'Hiking',
+                          widget.product.categories.name,
                           style: secondaryTextStyle.copyWith(
                             fontSize: 12,
                           ),
@@ -244,11 +251,9 @@ class _DetailProductScreenState extends State<DetailProductScreen> {
                   ),
                   GestureDetector(
                     onTap: () {
-                      setState(() {
-                        isWishlist = !isWishlist;
-                      });
+                      wishlistProvider.setProduct(widget.product);
 
-                      if (isWishlist) {
+                      if (wishlistProvider.isWishlist(widget.product)) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
                             backgroundColor: secondaryColor,
@@ -271,7 +276,7 @@ class _DetailProductScreenState extends State<DetailProductScreen> {
                       }
                     },
                     child: Image.asset(
-                      isWishlist
+                      wishlistProvider.isWishlist(widget.product)
                           ? 'assets/button_wishlist_blue.png'
                           : 'assets/button_wishlist.png',
                       width: 46,
@@ -301,7 +306,7 @@ class _DetailProductScreenState extends State<DetailProductScreen> {
                     style: primaryTextStyle,
                   ),
                   Text(
-                    '\$132.68',
+                    '\$${widget.product.price}',
                     style: priceTextStyle.copyWith(
                       fontSize: 16,
                       fontWeight: semiBold,
@@ -331,7 +336,7 @@ class _DetailProductScreenState extends State<DetailProductScreen> {
                     height: 12,
                   ),
                   Text(
-                    'Unpaved trails and mixed surfaces are easy when you have the traction and support you need. Casual enough for the daily commute.',
+                    widget.product.description,
                     style: subtitleTextStyle.copyWith(
                       fontWeight: light,
                     ),

@@ -34,8 +34,13 @@ class ProductModel {
     galleries = json['galleries']
         .map<GalleriesModel>((gallery) => GalleriesModel.fromJson(gallery))
         .toList();
-    createdAt = DateTime.parse(json['created_at']);
-    updatedAt = DateTime.parse(json['uppdated_at']);
+    createdAt = json['createdAt'] == null
+        ? null
+        : DateTime.parse(json['createdAt'] as String);
+
+    updatedAt = json['updatedAt'] == null
+        ? null
+        : DateTime.parse(json['updatedAt'] as String);
   }
 
   Map<String, dynamic> toJson() {
