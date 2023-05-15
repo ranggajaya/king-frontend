@@ -1,117 +1,115 @@
 import 'package:flutter/material.dart';
+import 'package:king_frontend/providers/wishlist_provider.dart';
 import 'package:king_frontend/themes/theme.dart';
 import 'package:king_frontend/widget/wishlist_card.dart';
+import 'package:provider/provider.dart';
 
 class WishlistScreen extends StatelessWidget {
-  Widget header() {
-    return AppBar(
-      backgroundColor: backgroundColor1,
-      centerTitle: true,
-      title: Text(
-        'Favorite',
-        style: primaryTextStyle.copyWith(
-          fontSize: 18,
-          fontWeight: medium,
-        ),
-      ),
-      elevation: 0,
-      automaticallyImplyLeading: false,
-    );
-  }
+  @override
+  Widget build(BuildContext context) {
+    WishlistProvider wishlistProvider = Provider.of<WishlistProvider>(context);
 
-  Widget emptyWishlist() {
-    return Expanded(
-      child: Container(
-        width: double.infinity,
-        color: backgroundColor3,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Image.asset(
-              'assets/image_wishlist.png',
-              width: 74,
-            ),
-            SizedBox(
-              height: 23,
-            ),
-            Text(
-              'You don\'t have dream shoes?',
-              style: primaryTextStyle.copyWith(
-                fontSize: 16,
-                fontWeight: medium,
+    Widget header() {
+      return AppBar(
+        backgroundColor: backgroundColor1,
+        centerTitle: true,
+        title: Text(
+          'Favorite',
+          style: primaryTextStyle.copyWith(
+            fontSize: 18,
+            fontWeight: medium,
+          ),
+        ),
+        elevation: 0,
+        automaticallyImplyLeading: false,
+      );
+    }
+
+    Widget emptyWishlist() {
+      return Expanded(
+        child: Container(
+          width: double.infinity,
+          color: backgroundColor3,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Image.asset(
+                'assets/image_wishlist.png',
+                width: 74,
               ),
-            ),
-            SizedBox(
-              height: 5,
-            ),
-            Text(
-              'Let\'s find your favorite shoes',
-              style: secondaryTextStyle,
-            ),
-            SizedBox(
-              height: 20,
-            ),
-            Container(
-              height: 44,
-              child: TextButton(
-                onPressed: () {},
-                style: TextButton.styleFrom(
-                    padding: EdgeInsets.symmetric(
-                      vertical: 10,
-                      horizontal: 24,
+              SizedBox(
+                height: 23,
+              ),
+              Text(
+                'You don\'t have dream shoes?',
+                style: primaryTextStyle.copyWith(
+                  fontSize: 16,
+                  fontWeight: medium,
+                ),
+              ),
+              SizedBox(
+                height: 5,
+              ),
+              Text(
+                'Let\'s find your favorite shoes',
+                style: secondaryTextStyle,
+              ),
+              SizedBox(
+                height: 20,
+              ),
+              Container(
+                height: 44,
+                child: TextButton(
+                  onPressed: () {},
+                  style: TextButton.styleFrom(
+                      padding: EdgeInsets.symmetric(
+                        vertical: 10,
+                        horizontal: 24,
+                      ),
+                      backgroundColor: primaryColor,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      )),
+                  child: Text(
+                    'Explore Store',
+                    style: primaryTextStyle.copyWith(
+                      fontSize: 16,
+                      fontWeight: medium,
                     ),
-                    backgroundColor: primaryColor,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    )),
-                child: Text(
-                  'Explore Store',
-                  style: primaryTextStyle.copyWith(
-                    fontSize: 16,
-                    fontWeight: medium,
                   ),
                 ),
               ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget content() {
-    return Expanded(
-      child: Container(
-        color: backgroundColor3,
-        child: ListView(
-          padding: EdgeInsets.only(
-            right: defaultMargin,
-            left: defaultMargin,
-            bottom: defaultMargin,
+            ],
           ),
-          children: [
-            WishlistCard(),
-            WishlistCard(),
-            WishlistCard(),
-            WishlistCard(),
-            WishlistCard(),
-            WishlistCard(),
-            WishlistCard(),
-            WishlistCard(),
-            WishlistCard(),
-          ],
         ),
-      ),
-    );
-  }
+      );
+    }
 
-  @override
-  Widget build(BuildContext context) {
+    Widget content() {
+      return Expanded(
+        child: Container(
+          color: backgroundColor3,
+          child: ListView(
+            padding: EdgeInsets.only(
+              right: defaultMargin,
+              left: defaultMargin,
+              bottom: defaultMargin,
+            ),
+            children: wishlistProvider.wishlist
+                .map(
+                  (product) => WishlistCard(product),
+                )
+                .toList(),
+          ),
+        ),
+      );
+    }
+
     return Column(
       children: [
         header(),
         //emptyWishlist(),
-        content(),
+        wishlistProvider.wishlist.length == 0 ? emptyWishlist() : content(),
       ],
     );
   }

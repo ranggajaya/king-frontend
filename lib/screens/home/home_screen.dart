@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:king_frontend/models/user_model.dart';
 import 'package:king_frontend/providers/auth_provider.dart';
+import 'package:king_frontend/providers/product_provider.dart';
 import 'package:king_frontend/themes/theme.dart';
 import 'package:king_frontend/widget/product_tile.dart';
 import 'package:king_frontend/widget/products_card.dart';
@@ -11,6 +12,7 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     AuthProvider authProvider = Provider.of<AuthProvider>(context);
     UserModel user = authProvider.user;
+    ProductProvider productProvider = Provider.of<ProductProvider>(context);
 
     Widget header() {
       return Container(
@@ -216,12 +218,12 @@ class HomeScreen extends StatelessWidget {
                 width: defaultMargin,
               ),
               Row(
-                children: [
-                  ProductCard(),
-                  ProductCard(),
-                  ProductCard(),
-                ],
-              )
+                children: productProvider.products
+                    .map(
+                      (product) => ProductCard(product),
+                    )
+                    .toList(),
+              ),
             ],
           ),
         ),
@@ -251,12 +253,11 @@ class HomeScreen extends StatelessWidget {
           top: 14,
         ),
         child: Column(
-          children: [
-            ProductTile(),
-            ProductTile(),
-            ProductTile(),
-            ProductTile(),
-          ],
+          children: productProvider.products
+              .map(
+                (product) => ProductTile(product),
+              )
+              .toList(),
         ),
       );
     }

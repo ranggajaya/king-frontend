@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:king_frontend/providers/auth_provider.dart';
 import 'package:king_frontend/providers/product_provider.dart';
+import 'package:king_frontend/providers/wishlist_provider.dart';
 import 'package:king_frontend/screens/cart_screen.dart';
 import 'package:king_frontend/screens/checkout_screen.dart';
 import 'package:king_frontend/screens/checkout_succes.dart';
@@ -12,6 +13,9 @@ import 'package:king_frontend/screens/sign_in_screen.dart';
 import 'package:king_frontend/screens/sign_up_screen.dart';
 import 'package:king_frontend/screens/splash_screen.dart';
 import 'package:provider/provider.dart';
+
+//ext.kotlin_version = '1.6.10' sebelumnya 1.3.50
+//gradle-7.4-all.zip sebelumnya 6.7.4-bin
 
 void main() => runApp(MyApp());
 
@@ -26,6 +30,9 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(
           create: (context) => ProductProvider(),
         ),
+        ChangeNotifierProvider(
+          create: (context) => WishlistProvider(),
+        ),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -36,7 +43,6 @@ class MyApp extends StatelessWidget {
           '/home': (context) => MainScreen(),
           '/chat': (context) => DetailChatScreen(),
           '/edit-profile': (context) => EditProfileScreen(),
-          '/detail-product': (context) => DetailProductScreen(),
           '/cart': (context) => CartScreen(),
           '/checkout': (context) => CheckoutScreen(),
           '/checkout-success': (context) => CheckoutSuccess(),
