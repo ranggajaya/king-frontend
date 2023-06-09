@@ -21,12 +21,19 @@ if (flutterVersionName == null) {
     flutterVersionName = '1.0'
 }
 
+// plugins{
+//     id 'com.android.application'
+//     id 'com.google.gms.google-services'
+//     id 'kotlin-android'
+// }
+
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
+apply plugin: 'com.google.gms.google-services'
 apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 
 android {
-    compileSdkVersion 31
+    compileSdkVersion 33
 
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
@@ -34,9 +41,10 @@ android {
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId "com.example.king_frontend"
-        minSdkVersion 16
-        targetSdkVersion 30
+        multiDexEnabled true
+        applicationId "com.mybam.king_frontend"
+        minSdkVersion 19
+        targetSdkVersion 33
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
     }
@@ -55,5 +63,8 @@ flutter {
 }
 
 dependencies {
+    implementation 'com.android.support:multidex:2.0.1' //enter the latest multidex version
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation platform('com.google.firebase:firebase-bom:32.0.0')
+    implementation 'com.google.firebase:firebase-analytics'
 }

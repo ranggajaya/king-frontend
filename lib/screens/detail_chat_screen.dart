@@ -1,10 +1,42 @@
 import 'package:flutter/material.dart';
+import 'package:king_frontend/models/message_model.dart';
+import 'package:king_frontend/models/product_model.dart';
+import 'package:king_frontend/providers/auth_provider.dart';
+import 'package:king_frontend/services/message_service.dart';
 import 'package:king_frontend/themes/theme.dart';
 import 'package:king_frontend/widget/chat_bubble.dart';
+import 'package:provider/provider.dart';
 
-class DetailChatScreen extends StatelessWidget {
+class DetailChatScreen extends StatefulWidget {
+  ProductModel product;
+
+  DetailChatScreen(this.product);
+
+  @override
+  State<DetailChatScreen> createState() => _DetailChatScreenState();
+}
+
+class _DetailChatScreenState extends State<DetailChatScreen> {
+  TextEditingController messageController = TextEditingController(text: '');
+
   @override
   Widget build(BuildContext context) {
+    AuthProvider authProvider = Provider.of<AuthProvider>(context);
+
+    handleAddMessage() async {
+      await MessageService().addMessage(
+        user: authProvider.user,
+        isFromUser: true,
+        product: widget.product,
+        message: messageController.text,
+      );
+
+      setState(() {
+        widget.product = UninitializedProductModel();
+        messageController.text = '';
+      });
+    }
+
     Widget header() {
       return PreferredSize(
         preferredSize: Size.fromHeight(70),
@@ -63,8 +95,8 @@ class DetailChatScreen extends StatelessWidget {
           children: [
             ClipRRect(
               borderRadius: BorderRadius.circular(12),
-              child: Image.asset(
-                'assets/image_shoes.png',
+              child: Image.network(
+                widget.product.galleries[0].url,
                 width: 54,
               ),
             ),
@@ -77,7 +109,7 @@ class DetailChatScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'COURT VISIO...',
+                    widget.product.name,
                     style: primaryTextStyle,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -85,7 +117,7 @@ class DetailChatScreen extends StatelessWidget {
                     height: 2,
                   ),
                   Text(
-                    '\$68,56',
+                    '\$${widget.product.price}',
                     style: priceTextStyle.copyWith(
                       fontWeight: medium,
                     ),
@@ -93,9 +125,16 @@ class DetailChatScreen extends StatelessWidget {
                 ],
               ),
             ),
-            Image.asset(
-              'assets/button_close.png',
-              width: 22,
+            GestureDetector(
+              onTap: (() {
+                setState(() {
+                  widget.product = UninitializedProductModel();
+                });
+              }),
+              child: Image.asset(
+                'assets/button_close.png',
+                width: 22,
+              ),
             ),
           ],
         ),
@@ -109,7 +148,9 @@ class DetailChatScreen extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            productAskChat(),
+            widget.product is UninitializedProductModel
+                ? SizedBox()
+                : productAskChat(),
             Row(
               children: [
                 Expanded(
@@ -124,6 +165,7 @@ class DetailChatScreen extends StatelessWidget {
                     ),
                     child: Center(
                       child: TextFormField(
+                        controller: messageController,
                         style: primaryTextStyle,
                         decoration: InputDecoration.collapsed(
                           hintText: 'Type Message...',
@@ -136,9 +178,12 @@ class DetailChatScreen extends StatelessWidget {
                 SizedBox(
                   width: 20,
                 ),
-                Image.asset(
-                  'assets/button_send.png',
-                  width: 45,
+                GestureDetector(
+                  onTap: handleAddMessage,
+                  child: Image.asset(
+                    'assets/button_send.png',
+                    width: 45,
+                  ),
                 ),
               ],
             ),
@@ -148,23 +193,29 @@ class DetailChatScreen extends StatelessWidget {
     }
 
     Widget content() {
-      return ListView(
-        padding: EdgeInsets.symmetric(
-          horizontal: defaultMargin,
-        ),
-        children: [
-          ChatBubble(
-            isSender: true,
-            text: 'Hi, Apakah produk ini masih ada?',
-            hasProduct: true,
-          ),
-          ChatBubble(
-            isSender: false,
-            text:
-                'Selamat malam, Produk ini hanya tersisa untuk ukuran 42 dan warna hitam saja',
-          ),
-        ],
-      );
+      return StreamBuilder<List<MessageModel>>(
+          stream: MessageService()
+              .getMessagesByUserId(userId: authProvider.user.id),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              return ListView(
+                padding: EdgeInsets.symmetric(
+                  horizontal: defaultMargin,
+                ),
+                children: snapshot.data
+                    .map((MessageModel message) => ChatBubble(
+                          isSender: message.isFromUser,
+                          text: message.message,
+                          product: message.product,
+                        ))
+                    .toList(),
+              );
+            } else {
+              return Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+          });
     }
 
     return Scaffold(

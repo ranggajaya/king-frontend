@@ -1,12 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:king_frontend/models/product_model.dart';
+import 'package:king_frontend/screens/detail_chat_screen.dart';
 import 'package:king_frontend/themes/theme.dart';
 
+import '../models/message_model.dart';
+
 class ChatTile extends StatelessWidget {
+  final MessageModel message;
+  ChatTile(this.message);
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Navigator.pushNamed(context, '/chat');
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => DetailChatScreen(
+              UninitializedProductModel(),
+            ),
+          ),
+        );
       },
       child: Container(
         margin: EdgeInsets.only(
@@ -34,7 +48,7 @@ class ChatTile extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        'Selamat pagi, Apakah item ini masih...',
+                        message.message,
                         style: secondaryTextStyle.copyWith(
                           fontWeight: light,
                         ),

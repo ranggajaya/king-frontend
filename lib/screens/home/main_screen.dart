@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:king_frontend/providers/page_provider.dart';
 import 'package:king_frontend/screens/home/chat_screen.dart';
 import 'package:king_frontend/screens/home/home_screen.dart';
 import 'package:king_frontend/screens/home/profile_screen.dart';
 import 'package:king_frontend/screens/home/wishlist_screen.dart';
 import 'package:king_frontend/themes/theme.dart';
+import 'package:provider/provider.dart';
 
 class MainScreen extends StatefulWidget {
   @override
@@ -11,10 +13,10 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
-  int currentIndex = 0;
-
   @override
   Widget build(BuildContext context) {
+    PageProvider pageProvider = Provider.of<PageProvider>(context);
+
     Widget cartButton() {
       return FloatingActionButton(
         onPressed: () {
@@ -38,11 +40,10 @@ class _MainScreenState extends State<MainScreen> {
           notchMargin: 12,
           clipBehavior: Clip.antiAlias,
           child: BottomNavigationBar(
-            currentIndex: currentIndex,
+            currentIndex: pageProvider.currentIndex,
             onTap: (value) {
-              setState(() {
-                currentIndex = value;
-              });
+              print(value);
+              pageProvider.currentIndex = value;
             },
             backgroundColor: backgroundColor4,
             type: BottomNavigationBarType.fixed,
@@ -56,7 +57,9 @@ class _MainScreenState extends State<MainScreen> {
                   child: Image.asset(
                     'assets/icon_home.png',
                     width: 21,
-                    color: currentIndex == 0 ? primaryColor : Color(0xff808191),
+                    color: pageProvider.currentIndex == 0
+                        ? primaryColor
+                        : Color(0xff808191),
                   ),
                 ),
                 label: '',
@@ -70,7 +73,9 @@ class _MainScreenState extends State<MainScreen> {
                   child: Image.asset(
                     'assets/icon_chat.png',
                     width: 21,
-                    color: currentIndex == 1 ? primaryColor : Color(0xff808191),
+                    color: pageProvider.currentIndex == 1
+                        ? primaryColor
+                        : Color(0xff808191),
                   ),
                 ),
                 label: '',
@@ -84,7 +89,9 @@ class _MainScreenState extends State<MainScreen> {
                   child: Image.asset(
                     'assets/icon_wishlist.png',
                     width: 21,
-                    color: currentIndex == 2 ? primaryColor : Color(0xff808191),
+                    color: pageProvider.currentIndex == 2
+                        ? primaryColor
+                        : Color(0xff808191),
                   ),
                 ),
                 label: '',
@@ -98,7 +105,9 @@ class _MainScreenState extends State<MainScreen> {
                   child: Image.asset(
                     'assets/icon_profile.png',
                     width: 21,
-                    color: currentIndex == 3 ? primaryColor : Color(0xff808191),
+                    color: pageProvider.currentIndex == 3
+                        ? primaryColor
+                        : Color(0xff808191),
                   ),
                 ),
                 label: '',
@@ -110,7 +119,7 @@ class _MainScreenState extends State<MainScreen> {
     }
 
     Widget body() {
-      switch (currentIndex) {
+      switch (pageProvider.currentIndex) {
         case 0:
           return HomeScreen();
           break;
@@ -130,7 +139,8 @@ class _MainScreenState extends State<MainScreen> {
     }
 
     return Scaffold(
-      backgroundColor: currentIndex == 0 ? backgroundColor1 : backgroundColor3,
+      backgroundColor:
+          pageProvider.currentIndex == 0 ? backgroundColor1 : backgroundColor3,
       floatingActionButton: cartButton(),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       bottomNavigationBar: customBottomNav(),

@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:king_frontend/providers/product_provider.dart';
 import 'package:king_frontend/themes/theme.dart';

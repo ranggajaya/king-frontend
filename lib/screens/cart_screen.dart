@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:king_frontend/providers/cart_provider.dart';
 import 'package:king_frontend/themes/theme.dart';
 import 'package:king_frontend/widget/cart_card.dart';
+import 'package:provider/provider.dart';
 
 class CartScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    CartProvider cartProvider = Provider.of<CartProvider>(context);
+
     Widget header() {
       return AppBar(
         leading: GestureDetector(
@@ -93,9 +97,11 @@ class CartScreen extends StatelessWidget {
         padding: EdgeInsets.symmetric(
           horizontal: defaultMargin,
         ),
-        children: [
-          CartCard(),
-        ],
+        children: cartProvider.carts
+            .map(
+              (cart) => CartCard(cart),
+            )
+            .toList(),
       );
     }
 
@@ -116,7 +122,7 @@ class CartScreen extends StatelessWidget {
                     style: primaryTextStyle,
                   ),
                   Text(
-                    '\$276,98',
+                    '\$${cartProvider.totalPrice()}',
                     style: priceTextStyle.copyWith(
                       fontSize: 16,
                       fontWeight: semiBold,
@@ -176,8 +182,9 @@ class CartScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: backgroundColor3,
       appBar: header(),
-      body: content(),
-      bottomNavigationBar: customBottomNav(),
+      body: cartProvider.carts.length == 0 ? emptyCart() : content(),
+      bottomNavigationBar:
+          cartProvider.carts.length == 0 ? SizedBox() : customBottomNav(),
     );
   }
 }

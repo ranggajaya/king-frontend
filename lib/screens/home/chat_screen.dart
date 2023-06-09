@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:king_frontend/models/message_model.dart';
+import 'package:king_frontend/providers/auth_provider.dart';
+import 'package:king_frontend/services/message_service.dart';
 import 'package:king_frontend/themes/theme.dart';
 import 'package:king_frontend/widget/chat_tile.dart';
+import 'package:provider/provider.dart';
 
 class ChatScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    AuthProvider authProvider = Provider.of<AuthProvider>(context);
+
     Widget header() {
       return AppBar(
         backgroundColor: backgroundColor1,
@@ -18,24 +24,6 @@ class ChatScreen extends StatelessWidget {
         ),
         elevation: 0,
         automaticallyImplyLeading: false,
-      );
-    }
-
-    Widget content() {
-      return Expanded(
-        child: Container(
-          width: double.infinity,
-          color: backgroundColor3,
-          child: ListView(
-            padding: EdgeInsets.symmetric(
-              horizontal: defaultMargin,
-            ),
-            children: [
-              ChatTile(),
-              ChatTile(),
-            ],
-          ),
-        ),
       );
     }
 
@@ -98,6 +86,36 @@ class ChatScreen extends StatelessWidget {
           ),
         ),
       );
+    }
+
+    Widget content() {
+      return StreamBuilder<List<MessageModel>>(
+          stream: MessageService()
+              .getMessagesByUserId(userId: authProvider.user.id),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              if (snapshot.data.length == 0) {
+                return emptyChat();
+              }
+
+              return Expanded(
+                child: Container(
+                  width: double.infinity,
+                  color: backgroundColor3,
+                  child: ListView(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: defaultMargin,
+                    ),
+                    children: [
+                      ChatTile(snapshot.data[snapshot.data.length - 1]),
+                    ],
+                  ),
+                ),
+              );
+            } else {
+              return emptyChat();
+            }
+          });
     }
 
     return Column(

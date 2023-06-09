@@ -1,7 +1,9 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:king_frontend/models/product_model.dart';
+import 'package:king_frontend/providers/cart_provider.dart';
 import 'package:king_frontend/providers/wishlist_provider.dart';
+import 'package:king_frontend/screens/detail_chat_screen.dart';
 import 'package:king_frontend/themes/theme.dart';
 import 'package:provider/provider.dart';
 
@@ -37,6 +39,7 @@ class _DetailProductScreenState extends State<DetailProductScreen> {
   @override
   Widget build(BuildContext context) {
     WishlistProvider wishlistProvider = Provider.of<WishlistProvider>(context);
+    CartProvider cartProvider = Provider.of<CartProvider>(context);
 
     Future<void> showSuccessDialog() async {
       return showDialog(
@@ -89,7 +92,9 @@ class _DetailProductScreenState extends State<DetailProductScreen> {
                     width: 154,
                     height: 54,
                     child: TextButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.pushNamed(context, '/cart');
+                      },
                       style: TextButton.styleFrom(
                           backgroundColor: primaryColor,
                           shape: RoundedRectangleBorder(
@@ -399,7 +404,13 @@ class _DetailProductScreenState extends State<DetailProductScreen> {
                 children: [
                   GestureDetector(
                     onTap: () {
-                      Navigator.pushNamed(context, '/chat');
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              DetailChatScreen(widget.product),
+                        ),
+                      );
                     },
                     child: Container(
                       width: 54,
@@ -421,6 +432,7 @@ class _DetailProductScreenState extends State<DetailProductScreen> {
                       height: 54,
                       child: TextButton(
                         onPressed: () {
+                          cartProvider.addCart(widget.product);
                           showSuccessDialog();
                         },
                         style: TextButton.styleFrom(
