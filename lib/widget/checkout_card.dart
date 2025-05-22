@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:king_frontend/models/cart_model.dart';
 import 'package:king_frontend/themes/theme.dart';
 
+import '../services/url.dart';
+
 class CheckoutCard extends StatelessWidget {
   final CartModel cart;
   CheckoutCard(this.cart);
@@ -24,13 +26,22 @@ class CheckoutCard extends StatelessWidget {
             width: 60,
             height: 60,
             decoration: BoxDecoration(
-              image: DecorationImage(
-                image: NetworkImage(
-                  cart.product.galleries[0].url,
-                ),
-              ),
               borderRadius: BorderRadius.circular(12),
+              image: cart.product.galleries.isNotEmpty
+                  ? DecorationImage(
+                      image: NetworkImage(
+                        "$urlBaseImage${cart.product.galleries[0].url}",
+                      ),
+                      fit: BoxFit.cover,
+                    )
+                  : null,
+              color:
+                  Colors.grey[300], // fallback background jika tidak ada gambar
             ),
+            child: cart.product.galleries.isEmpty
+                ? Icon(Icons.image_not_supported,
+                    size: 30, color: Colors.grey[600])
+                : null,
           ),
           SizedBox(
             width: 12,
@@ -48,7 +59,7 @@ class CheckoutCard extends StatelessWidget {
                   height: 2,
                 ),
                 Text(
-                  '\$${cart.product.price}',
+                  'Rp${cart.product.price}',
                   style: priceTextStyle.copyWith(fontWeight: semiBold),
                 )
               ],

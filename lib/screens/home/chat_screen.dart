@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:king_frontend/models/message_model.dart';
 import 'package:king_frontend/providers/auth_provider.dart';
+import 'package:king_frontend/providers/page_provider.dart';
 import 'package:king_frontend/services/message_service.dart';
 import 'package:king_frontend/themes/theme.dart';
 import 'package:king_frontend/widget/chat_tile.dart';
@@ -10,6 +11,7 @@ class ChatScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     AuthProvider authProvider = Provider.of<AuthProvider>(context);
+    PageProvider pageProvider = Provider.of<PageProvider>(context);
 
     Widget header() {
       return AppBar(
@@ -62,7 +64,9 @@ class ChatScreen extends StatelessWidget {
               Container(
                 height: 44,
                 child: TextButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    pageProvider.currentIndex = 0;
+                  },
                   style: TextButton.styleFrom(
                     padding: EdgeInsets.symmetric(
                       vertical: 10,
@@ -90,32 +94,38 @@ class ChatScreen extends StatelessWidget {
 
     Widget content() {
       return StreamBuilder<List<MessageModel>>(
-          stream: MessageService()
-              .getMessagesByUserId(userId: authProvider.user.id),
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              if (snapshot.data.length == 0) {
-                return emptyChat();
-              }
+        stream: MessageService().getChatForCurrentUser(authProvider.user.id),
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            print('Terjadi kesalahan: ${snapshot.error}');
+            return Center(child: Text('Terjadi kesalahan: ${snapshot.error}'));
+          }
 
-              return Expanded(
-                child: Container(
-                  width: double.infinity,
-                  color: backgroundColor3,
-                  child: ListView(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: defaultMargin,
-                    ),
-                    children: [
-                      ChatTile(snapshot.data[snapshot.data.length - 1]),
-                    ],
-                  ),
-                ),
-              );
-            } else {
-              return emptyChat();
-            }
-          });
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          }
+
+          final users = snapshot.data ?? [];
+
+          if (users.isEmpty) {
+            return emptyChat();
+          }
+
+          return Expanded(
+            child: Container(
+              width: double.infinity,
+              color: backgroundColor3,
+              child: ListView.builder(
+                padding: EdgeInsets.symmetric(horizontal: defaultMargin),
+                itemCount: users.length,
+                itemBuilder: (context, index) {
+                  return ChatTile(users[index]); // Per user
+                },
+              ),
+            ),
+          );
+        },
+      );
     }
 
     return Column(

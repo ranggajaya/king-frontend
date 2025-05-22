@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:king_frontend/models/cart_model.dart';
 import 'package:king_frontend/providers/cart_provider.dart';
+import 'package:king_frontend/services/url.dart';
 import 'package:king_frontend/themes/theme.dart';
 import 'package:provider/provider.dart';
 
@@ -31,10 +32,21 @@ class CartCard extends StatelessWidget {
                 height: 60,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(12),
-                  image: DecorationImage(
-                    image: NetworkImage(cart.product.galleries[0].url),
-                  ),
+                  image: cart.product.galleries.isNotEmpty
+                      ? DecorationImage(
+                          image: NetworkImage(
+                            "$urlBaseImage${cart.product.galleries[0].url}",
+                          ),
+                          fit: BoxFit.cover,
+                        )
+                      : null,
+                  color: Colors
+                      .grey[300], // fallback background jika tidak ada gambar
                 ),
+                child: cart.product.galleries.isEmpty
+                    ? Icon(Icons.image_not_supported,
+                        size: 30, color: Colors.grey[600])
+                    : null,
               ),
               SizedBox(
                 width: 12,
@@ -50,7 +62,7 @@ class CartCard extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      '\$${cart.product.price}',
+                      'Rp${cart.product.price}',
                       style: priceTextStyle,
                     ),
                   ],

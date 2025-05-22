@@ -7,6 +7,8 @@ import 'package:king_frontend/themes/theme.dart';
 import 'package:king_frontend/widget/chat_bubble.dart';
 import 'package:provider/provider.dart';
 
+import '../services/url.dart';
+
 class DetailChatScreen extends StatefulWidget {
   ProductModel product;
 
@@ -16,8 +18,51 @@ class DetailChatScreen extends StatefulWidget {
   State<DetailChatScreen> createState() => _DetailChatScreenState();
 }
 
-class _DetailChatScreenState extends State<DetailChatScreen> {
+class _DetailChatScreenState extends State<DetailChatScreen>
+    with WidgetsBindingObserver {
   TextEditingController messageController = TextEditingController(text: '');
+  final ScrollController _scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    // Future.delayed(Duration(milliseconds: 100), () {
+    //   scrollToBottom(jump: true); // Gunakan jump untuk langsung ke bawah
+    // });
+    WidgetsBinding.instance.addObserver(this); // ⬅️ Tambahkan observer
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this); // ⬅️ Hapus observer
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  @override
+  void didChangeMetrics() {
+    final bottomInset = WidgetsBinding.instance.window.viewInsets.bottom;
+    if (bottomInset > 0.0) {
+      // Keyboard muncul
+      Future.delayed(Duration(milliseconds: 100), () {
+        scrollToBottom(jump: true); // Gunakan jump untuk langsung ke bawah
+      });
+    }
+  }
+
+  void scrollToBottom({bool jump = false}) {
+    if (_scrollController.hasClients) {
+      if (jump) {
+        _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+      } else {
+        _scrollController.animateTo(
+          _scrollController.position.maxScrollExtent,
+          duration: Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+        );
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,10 +76,21 @@ class _DetailChatScreenState extends State<DetailChatScreen> {
         message: messageController.text,
       );
 
-      setState(() {
-        widget.product = UninitializedProductModel();
-        messageController.text = '';
-      });
+      await MessageService().sendToBackend(
+        userId: authProvider.user.id,
+        token: authProvider.user.token,
+        message: messageController.text,
+        isFromUser: true,
+      );
+
+      widget.product = UninitializedProductModel();
+      messageController.clear();
+      setState(() {});
+
+      // // ✅ Scroll otomatis ke bawah saat pesan berhasil dimuat
+      // WidgetsBinding.instance.addPostFrameCallback((_) {
+      //   scrollToBottom(jump: true);
+      // });
     }
 
     Widget header() {
@@ -80,7 +136,7 @@ class _DetailChatScreenState extends State<DetailChatScreen> {
     Widget productAskChat() {
       return Container(
         width: 225,
-        height: 74,
+        height: 100,
         margin: EdgeInsets.only(bottom: 20),
         padding: EdgeInsets.all(10),
         decoration: BoxDecoration(
@@ -90,50 +146,69 @@ class _DetailChatScreenState extends State<DetailChatScreen> {
             color: primaryColor,
           ),
         ),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: Stack(
           children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(12),
-              child: Image.network(
-                widget.product.galleries[0].url,
-                width: 54,
-              ),
-            ),
-            SizedBox(
-              width: 10,
-            ),
-            Expanded(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
+            // Konten utama (gambar + teks) sejajar kiri, tapi tetap vertikal center
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Text(
-                    widget.product.name,
-                    style: primaryTextStyle,
-                    overflow: TextOverflow.ellipsis,
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(12),
+                    child: SizedBox(
+                      width: 60,
+                      height: 60,
+                      child: widget.product.galleries.isNotEmpty
+                          ? Image.network(
+                              "$urlBaseImage${widget.product.galleries[0].url}",
+                              fit: BoxFit.cover,
+                            )
+                          : Container(
+                              color: Colors.grey[200],
+                              child: Icon(Icons.image_not_supported),
+                            ),
+                    ),
                   ),
-                  SizedBox(
-                    height: 2,
-                  ),
-                  Text(
-                    '\$${widget.product.price}',
-                    style: priceTextStyle.copyWith(
-                      fontWeight: medium,
+                  SizedBox(width: 8),
+                  Expanded(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          widget.product.name,
+                          style: primaryTextStyle,
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
+                        ),
+                        SizedBox(height: 4),
+                        Text(
+                          'Rp${widget.product.price}',
+                          style: priceTextStyle.copyWith(
+                            fontWeight: medium,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ],
               ),
             ),
-            GestureDetector(
-              onTap: (() {
-                setState(() {
-                  widget.product = UninitializedProductModel();
-                });
-              }),
-              child: Image.asset(
-                'assets/button_close.png',
-                width: 22,
+            // Tombol close tetap di pojok kanan atas
+            Positioned(
+              top: 0,
+              right: 0,
+              child: GestureDetector(
+                onTap: () {
+                  setState(() {
+                    widget.product = UninitializedProductModel();
+                  });
+                },
+                child: Image.asset(
+                  'assets/button_close.png',
+                  width: 18,
+                ),
               ),
             ),
           ],
@@ -194,35 +269,66 @@ class _DetailChatScreenState extends State<DetailChatScreen> {
 
     Widget content() {
       return StreamBuilder<List<MessageModel>>(
-          stream: MessageService()
-              .getMessagesByUserId(userId: authProvider.user.id),
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              return ListView(
-                padding: EdgeInsets.symmetric(
-                  horizontal: defaultMargin,
-                ),
-                children: snapshot.data
-                    .map((MessageModel message) => ChatBubble(
-                          isSender: message.isFromUser,
-                          text: message.message,
-                          product: message.product,
-                        ))
-                    .toList(),
-              );
-            } else {
-              return Center(
-                child: CircularProgressIndicator(),
-              );
+        stream: MessageService().getMessagesByUserId(
+          userId: authProvider.user.id,
+        ),
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) {
+            return SizedBox(); // Tidak tampilkan apa-apa
+          }
+          if (snapshot.hasError) {
+            return Center(
+              child: Text(
+                'Terjadi kesalahan: ${snapshot.error}',
+                style: TextStyle(color: Colors.red),
+              ),
+            );
+          }
+          final messages = snapshot.data ?? [];
+
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (_scrollController.hasClients) {
+              scrollToBottom(jump: true);
             }
           });
+
+          if (messages.isEmpty) {
+            return Center(
+              child: Text(
+                'Belum ada pesan',
+                style: primaryTextStyle.copyWith(fontSize: 16),
+              ),
+            );
+          }
+
+          return ListView.builder(
+            controller: _scrollController,
+            padding: EdgeInsets.symmetric(horizontal: defaultMargin),
+            itemCount: messages.length,
+            //reverse: true, // <--- bikin WhatsApp-like
+            itemBuilder: (context, index) {
+              // Karena reverse, messages[0] akan di paling bawah
+              final message = messages[index];
+              return ChatBubble(
+                isSender: message.isFromUser,
+                text: message.message,
+                product: message.product,
+              );
+            },
+          );
+        },
+      );
     }
 
     return Scaffold(
       backgroundColor: backgroundColor3,
       appBar: header(),
-      body: content(),
-      bottomNavigationBar: chatInput(),
+      body: Column(
+        children: [
+          Expanded(child: content()), // akan scroll saat keyboard muncul
+          chatInput(), // akan tetap di atas keyboard
+        ],
+      ),
     );
   }
 }

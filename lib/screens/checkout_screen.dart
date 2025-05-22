@@ -216,7 +216,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                       style: secondaryTextStyle.copyWith(fontSize: 12),
                     ),
                     Text(
-                      '\$${cartProvider.totalPrice()}',
+                      'Rp${cartProvider.totalPrice()}',
                       style: primaryTextStyle.copyWith(fontWeight: medium),
                     )
                   ],
@@ -253,7 +253,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                       style: priceTextStyle.copyWith(fontWeight: semiBold),
                     ),
                     Text(
-                      '\$${cartProvider.totalPrice()}',
+                      'Rp${cartProvider.totalPrice()}',
                       style: priceTextStyle.copyWith(fontWeight: semiBold),
                     )
                   ],

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:king_frontend/models/product_model.dart';
+import 'package:king_frontend/services/url.dart';
 import 'package:king_frontend/themes/theme.dart';
 
 class ChatBubble extends StatelessWidget {
@@ -20,9 +21,7 @@ class ChatBubble extends StatelessWidget {
       return Container(
         width: 230,
         padding: EdgeInsets.all(10),
-        margin: EdgeInsets.only(
-          bottom: 12,
-        ),
+        margin: EdgeInsets.only(bottom: 12),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.only(
             topLeft: Radius.circular(isSender ? 12 : 0),
@@ -33,19 +32,28 @@ class ChatBubble extends StatelessWidget {
           color: isSender ? backgroundColor5 : backgroundColor4,
         ),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 ClipRRect(
                   borderRadius: BorderRadius.circular(12),
-                  child: Image.network(
-                    product.galleries[0].url,
-                    width: 70,
+                  child: SizedBox(
+                    width: 60,
+                    height: 60,
+                    child: product.galleries.isNotEmpty
+                        ? Image.network(
+                            "$urlBaseImage${product.galleries[0].url}",
+                            fit: BoxFit.cover,
+                          )
+                        : Container(
+                            color: Colors.grey[200],
+                            child: Icon(Icons.image_not_supported),
+                          ),
                   ),
                 ),
-                SizedBox(
-                  width: 8,
-                ),
+                SizedBox(width: 8),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -53,32 +61,26 @@ class ChatBubble extends StatelessWidget {
                       Text(
                         product.name,
                         style: primaryTextStyle,
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
                       ),
-                      SizedBox(
-                        height: 4,
-                      ),
+                      SizedBox(height: 4),
                       Text(
-                        '\$${product.price}',
-                        style: priceTextStyle.copyWith(
-                          fontWeight: medium,
-                        ),
+                        'Rp${product.price}',
+                        style: priceTextStyle.copyWith(fontWeight: medium),
                       ),
                     ],
                   ),
                 ),
               ],
             ),
-            SizedBox(
-              height: 20,
-            ),
+            SizedBox(height: 12),
             Row(
               children: [
                 OutlinedButton(
                   onPressed: () {},
                   style: OutlinedButton.styleFrom(
-                    side: BorderSide(
-                      color: primaryColor,
-                    ),
+                    side: BorderSide(color: primaryColor),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
@@ -88,9 +90,7 @@ class ChatBubble extends StatelessWidget {
                     style: purpleTextStyle,
                   ),
                 ),
-                SizedBox(
-                  width: 8,
-                ),
+                SizedBox(width: 8),
                 TextButton(
                   onPressed: () {},
                   style: TextButton.styleFrom(

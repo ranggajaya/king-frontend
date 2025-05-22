@@ -34,13 +34,13 @@ class ProductModel {
     galleries = json['galleries']
         .map<GalleriesModel>((gallery) => GalleriesModel.fromJson(gallery))
         .toList();
-    createdAt = json['createdAt'] == null
+    createdAt = json['created_at'] == null
         ? null
-        : DateTime.parse(json['createdAt'] as String);
+        : DateTime.parse(json['created_at'] as String);
 
-    updatedAt = json['updatedAt'] == null
+    updatedAt = json['updated_at'] == null
         ? null
-        : DateTime.parse(json['updatedAt'] as String);
+        : DateTime.parse(json['updated_at'] as String);
   }
 
   Map<String, dynamic> toJson() {
@@ -52,8 +52,8 @@ class ProductModel {
       'tags': tags,
       'category': categories.toJson(),
       'galleries': galleries.map((gallery) => gallery.toJson()).toList(),
-      'createdAt': createdAt.toString(),
-      'updatedAt': updatedAt.toString(),
+      'created_at': createdAt.toString(),
+      'updated_at': updatedAt.toString(),
     };
   }
 }

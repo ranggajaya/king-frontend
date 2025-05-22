@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:king_frontend/models/product_model.dart';
 import 'package:king_frontend/screens/detail_product_screen.dart';
+import 'package:king_frontend/services/url.dart';
 import 'package:king_frontend/themes/theme.dart';
 
 class ProductCard extends StatelessWidget {
@@ -32,12 +33,19 @@ class ProductCard extends StatelessWidget {
             SizedBox(
               height: 30,
             ),
-            Image.network(
-              product.galleries[0].url,
-              width: 215,
-              height: 150,
-              fit: BoxFit.cover,
-            ),
+            product.galleries.isNotEmpty
+                ? Image.network(
+                    "$urlBaseImage${product.galleries[0].url}",
+                    width: 215,
+                    height: 150,
+                    fit: BoxFit.cover,
+                  )
+                : Container(
+                    width: 215,
+                    height: 150,
+                    color: Colors.grey[200],
+                    child: Icon(Icons.image_not_supported),
+                  ),
             Container(
               margin: EdgeInsets.symmetric(
                 horizontal: 20,
@@ -63,7 +71,7 @@ class ProductCard extends StatelessWidget {
                   ),
                   SizedBox(height: 6),
                   Text(
-                    '\$${product.price}',
+                    'Rp${product.price}',
                     style: priceTextStyle.copyWith(
                       fontSize: 14,
                       fontWeight: medium,

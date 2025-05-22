@@ -218,11 +218,12 @@ class HomeScreen extends StatelessWidget {
                 width: defaultMargin,
               ),
               Row(
-                children: productProvider.products
-                    .map(
-                      (product) => ProductCard(product),
-                    )
-                    .toList(),
+                children: productProvider.products.map((product) {
+                  print('Product: ${product.name}');
+                  print('createdAt: ${product.createdAt}');
+                  print('updatedAt: ${product.updatedAt}');
+                  return ProductCard(product);
+                }).toList(),
               ),
             ],
           ),

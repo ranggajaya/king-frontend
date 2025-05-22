@@ -1,6 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:king_frontend/providers/auth_provider.dart';
+import 'package:king_frontend/providers/auth_provider.dart' as auth;
 import 'package:king_frontend/providers/cart_provider.dart';
 import 'package:king_frontend/providers/page_provider.dart';
 import 'package:king_frontend/providers/product_provider.dart';
@@ -25,6 +26,9 @@ void main()
 async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  await FirebaseAuth.instance.signInAnonymously().then((userCred) {
+    print("Login berhasil: ${userCred..user?.uid}");
+  });
   runApp(MyApp());
 }
 
@@ -34,7 +38,7 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(
-          create: (context) => AuthProvider(),
+          create: (context) => auth.AuthProvider(),
         ),
         ChangeNotifierProvider(
           create: (context) => ProductProvider(),

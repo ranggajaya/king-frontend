@@ -1,9 +1,11 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:king_frontend/models/user_model.dart';
+import 'package:king_frontend/services/url.dart';
 
 class AuthService {
-  String baseUrl = 'https://shamo-backend.buildwithangga.id/api';
+  String baseUrl = urlBase;
+  //String baseUrl = 'http://10.0.2.2:8000/api';
 
   Future<UserModel> register({
     String name,
@@ -21,7 +23,7 @@ class AuthService {
     });
 
     var response = await http.post(
-      url,
+      Uri.parse(url),
       headers: headers,
       body: body,
     );
@@ -51,7 +53,7 @@ class AuthService {
     });
 
     var response = await http.post(
-      url,
+      Uri.parse(url),
       headers: headers,
       body: body,
     );

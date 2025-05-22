@@ -4,6 +4,7 @@ import 'package:king_frontend/models/product_model.dart';
 import 'package:king_frontend/providers/cart_provider.dart';
 import 'package:king_frontend/providers/wishlist_provider.dart';
 import 'package:king_frontend/screens/detail_chat_screen.dart';
+import 'package:king_frontend/services/url.dart';
 import 'package:king_frontend/themes/theme.dart';
 import 'package:provider/provider.dart';
 
@@ -160,16 +161,25 @@ class _DetailProductScreenState extends State<DetailProductScreen> {
             ),
           ),
           CarouselSlider(
-            items: widget.product.galleries
-                .map(
-                  (image) => Image.network(
-                    image.url,
-                    width: MediaQuery.of(context).size.width,
-                    height: 310,
-                    fit: BoxFit.cover,
-                  ),
-                )
-                .toList(),
+            items: widget.product.galleries.isNotEmpty
+                ? widget.product.galleries
+                    .map(
+                      (image) => Image.network(
+                        '$urlBaseImage${image.url}',
+                        width: MediaQuery.of(context).size.width,
+                        height: 310,
+                        fit: BoxFit.cover,
+                      ),
+                    )
+                    .toList()
+                : [
+                    Container(
+                      width: MediaQuery.of(context).size.width,
+                      height: 310,
+                      color: Colors.grey[300],
+                      child: Icon(Icons.image_not_supported, size: 50),
+                    ),
+                  ],
             options: CarouselOptions(
                 initialPage: 0,
                 onPageChanged: (index, reason) {

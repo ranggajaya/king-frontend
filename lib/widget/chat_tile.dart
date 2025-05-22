@@ -48,7 +48,7 @@ class ChatTile extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        message.message,
+                        message.message ?? '(pesan kosong)',
                         style: secondaryTextStyle.copyWith(
                           fontWeight: light,
                         ),

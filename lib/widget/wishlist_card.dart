@@ -4,6 +4,8 @@ import 'package:king_frontend/providers/wishlist_provider.dart';
 import 'package:king_frontend/themes/theme.dart';
 import 'package:provider/provider.dart';
 
+import '../services/url.dart';
+
 class WishlistCard extends StatelessWidget {
   final ProductModel product;
   WishlistCard(this.product);
@@ -28,10 +30,19 @@ class WishlistCard extends StatelessWidget {
         children: [
           ClipRRect(
             borderRadius: BorderRadius.circular(12),
-            child: Image.network(
-              product.galleries[0].url,
-              width: 60,
-            ),
+            child: product.galleries.isNotEmpty
+                ? Image.network(
+                    "$urlBaseImage${product.galleries[0].url}",
+                    width: 215,
+                    height: 150,
+                    fit: BoxFit.cover,
+                  )
+                : Container(
+                    width: 215,
+                    height: 150,
+                    color: Colors.grey[200],
+                    child: Icon(Icons.image_not_supported),
+                  ),
           ),
           SizedBox(
             width: 12,
@@ -47,7 +58,7 @@ class WishlistCard extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  '\$${product.price}',
+                  'Rp${product.price}',
                   style: priceTextStyle,
                 ),
               ],

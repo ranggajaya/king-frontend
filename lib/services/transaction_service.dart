@@ -1,9 +1,10 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:king_frontend/services/url.dart';
 import '../models/cart_model.dart';
 
 class TransactionService {
-  String baseUrl = 'https://shamo-backend.buildwithangga.id/api';
+  String baseUrl = urlBase;
 
   Future<bool> checkout(
       String token, List<CartModel> carts, double totalPrice) async {
@@ -30,7 +31,7 @@ class TransactionService {
     );
 
     var response = await http.post(
-      url,
+      Uri.parse(url),
       headers: headers,
       body: body,
     );

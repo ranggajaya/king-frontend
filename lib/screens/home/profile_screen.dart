@@ -11,6 +11,7 @@ class ProfileScreen extends StatelessWidget {
     UserModel user = authProvider.user;
 
     Widget header() {
+      print(user);
       return AppBar(
         backgroundColor: backgroundColor1,
         automaticallyImplyLeading: false,
@@ -22,7 +23,7 @@ class ProfileScreen extends StatelessWidget {
               children: [
                 ClipOval(
                   child: Image.network(
-                    user.profilePhotoUrl,
+                    '${user.profilePhotoUrl}',
                     width: 64,
                   ),
                 ),
@@ -39,7 +40,7 @@ class ProfileScreen extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        '@${user.username}',
+                        '@${user.username}' ?? 'Tidak ada username',
                         style: subtitleTextStyle.copyWith(fontSize: 16),
                       ),
                     ],
