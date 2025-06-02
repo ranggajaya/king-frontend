@@ -230,7 +230,9 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                       style: secondaryTextStyle.copyWith(fontSize: 12),
                     ),
                     Text(
-                      'Free',
+                      cartProvider.shipping == 0
+                          ? 'Free'
+                          : 'Rp${cartProvider.shipping}',
                       style: primaryTextStyle.copyWith(fontWeight: medium),
                     )
                   ],
